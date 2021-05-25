@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
-const Dropdown = ({ options, selected, onSelectedChange }) => {
+const Dropdown = ({ options, selected, onSelectedChange, label }) => {
     const [open, setOpen] = useState(false);
+    const ref = useRef();
 
-    const renderedOptions = options.map(option => {
+    useEffect(() => {
+        const onBodyClick = (event) => {
+            if (ref.current.contains(event.target)) {
+                return; // if target is part of the dropdown, do not proceed
+            }
+
+            setOpen(false);
+        };
+        document.body.addEventListener('click', onBodyClick, { capture: true });
+
+        return () => {
+            document.body.removeEventListener('click', onBodyClick, { capture: true });
+        }
+    }, [])
+
+    const renderedOptions = options.map((option) => {
         if (option.value === selected.value) {
             return null; // don't render
         }
@@ -17,24 +33,25 @@ const Dropdown = ({ options, selected, onSelectedChange }) => {
                 {option.label}
             </div>
         );
-    })
+    });
+
     return (
-        <div className="ui form">
+        <div ref={ref} className="ui form">
             <div className="field">
-                <label className="label">Select a Color</label>
+                <label className="label">{label}</label>
                 <div
                     onClick={() => setOpen(!open)}
-                    className={`ui selection dropdown ${open ? 'visible active' : ''}`}
+                    className={`ui selection dropdown ${open ? "visible active" : ""}`}
                 >
                     <i className="dropdown icon"></i>
                     <div className="text">{selected.label}</div>
-                    <div className={`menu ${open ? 'visible transition' : ''}`}>
+                    <div className={`menu ${open ? "visible transition" : ""}`}>
                         {renderedOptions}
                     </div>
                 </div>
             </div>
-        </div >
+        </div>
     );
-}
+};
 
 export default Dropdown;
