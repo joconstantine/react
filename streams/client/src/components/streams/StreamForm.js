@@ -1,5 +1,20 @@
 import React from 'react';
-import { Field, reduxForm } from 'redux-form';
+import { Field, Form } from 'react-final-form';
+
+const validate = (formValues) => {
+    const errors = {};
+
+    if (!formValues.title) {
+        // only ran if the user did not enter the title
+        errors.title = 'You must enter a title';
+    }
+
+    if (!formValues.description) {
+        // only ran if the user did not enter the title
+        errors.description = 'You must enter a description';
+    }
+    return errors;
+}
 
 class StreamForm extends React.Component {
     renderError({ error, touched }) {
@@ -23,39 +38,28 @@ class StreamForm extends React.Component {
         );
     };
 
-    onSubmit = (formValues) => {
+    onFormSubmit = (formValues) => {
         this.props.onSubmit(formValues);
     };
 
     render() {
         return (
-            <form
-                onSubmit={this.props.handleSubmit(this.onSubmit)}
-                className="ui form error"
-            >
-                <Field name="title" component={this.renderInput} label="Enter Title" />
-                <Field name="description" component={this.renderInput} label="Enter Description" />
-                <button className="ui button primary">Submit</button>
-            </form>
+            <Form initialValues={this.props.initialValues}
+                validate={validate}
+                onSubmit={this.onFormSubmit}>
+                {({ handleSubmit }) => (
+                    <form
+                        onSubmit={handleSubmit}
+                        className="ui form error"
+                    >
+                        <Field name="title" component={this.renderInput} label="Enter Title" />
+                        <Field name="description" component={this.renderInput} label="Enter Description" />
+                        <button className="ui button primary">Submit</button>
+                    </form>
+                )}
+            </Form>
         );
     }
 }
-const validate = (formValues) => {
-    const errors = {};
 
-    if (!formValues.title) {
-        // only ran if the user did not enter the title
-        errors.title = 'You must enter a title';
-    }
-
-    if (!formValues.description) {
-        // only ran if the user did not enter the title
-        errors.description = 'You must enter a description';
-    }
-    return errors;
-}
-
-export default reduxForm({
-    form: 'streamForm',
-    validate, //validate: validate
-})(StreamForm);
+export default StreamForm;
