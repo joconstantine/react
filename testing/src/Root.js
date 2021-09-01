@@ -4,7 +4,7 @@ import { createStore, applyMiddleware } from 'redux';
 import reduxPromise from 'redux-promise';
 import reducers from 'reducers';
 
-export default ({ children, initialState = {} }) => {
+const Root = ({ children, initialState = {} }) => {
   const store = createStore(
     reducers,
     initialState,
@@ -13,3 +13,5 @@ export default ({ children, initialState = {} }) => {
 
   return <Provider store={store}>{children}</Provider>;
 };
+
+export default Root;
